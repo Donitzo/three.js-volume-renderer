@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>three.js Volume Renderer</title>
+
+        <meta charset="utf-8" />
+
+        <style>
+body {
+    background-color: #000;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+}
+
+.info {
+    box-sizing: border-box;
+    color: #fff;
+    font-size: 120%;
+    padding: 10px;
+    position: absolute;
+    text-align: center;
+    top: 0px;
+    width: 100%;
+            user-select: none;
+        -ms-user-select: none;
+       -moz-user-select: none;
+    -webkit-user-select: none;
+}
+
+.glsl {
+    background-color: #fff4;
+    border: 0;
+    color: #3f3;
+    height: 200px;
+    overflow: auto;
+    position: absolute;
+    right: 266px;
+    resize: none;
+    top: 5px;
+    width: 300px;
+}
+
+a {
+    color: #aaf;
+}
+        </style>
+
+        <script src="https://cdn.jsdelivr.net/npm/lil-gui@0.20.0/dist/lil-gui.umd.min.js"></script>
+        <link href="https://cdn.jsdelivr.net/npm/lil-gui@0.20.0/dist/lil-gui.min.css" rel="stylesheet">
+
+        <script type="module">
+import './App.js';
+        </script>
+    </head>
+    <body>
+        <div class="info">
+            <a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> - volume renderer<br/>
+            skybox by <a href="https://www.pauldebevec.com/" target="_blank" rel="noopener">Paul Debevec</a>
+        </div>
+
+        <textarea class="glsl"></textarea>
+
+        <canvas></canvas>
+    </body>
+</html>
