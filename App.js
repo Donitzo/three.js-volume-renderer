@@ -392,7 +392,7 @@ return 0.5 * log(r) * r / dr * 10.0 + 1.0;
         folderOpacity.add(uniforms.extinctionMultiplier, 'value', 0, 10, 0.01)
             .name('Extinction Multiplier')
             .domElement.title = 'Multiplier applied to the extinction coefficient.';
-        folderOpacity.add(uniforms.alphaMultiplier, 'value', 0, 1, 0.01)
+        folderOpacity.add(uniforms.alphaMultiplier, 'value', 0, 4, 0.01)
             .name('Alpha Multiplier')
             .domElement.title = 'Multiplier applied to the final alpha value.';
 
