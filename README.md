@@ -46,8 +46,6 @@ Raymarching is a rendering technique where, for each pixel, we cast a ray into a
 
 When alpha blending is used, an extinction coefficient determines how much light is absorbed at each step, allowing you to see through semi-transparent volumes like smoke or mist. If lighting is enabled, we also estimate a normal at each step by computing the forward difference of the volume data, letting you illuminate the volume with directional or point lights for more realistic shading.
 
-In other words, raymarching gives you a flexible way to render volumetric effects—whether that means blending partial transparency for smoke-like objects or simply accumulating a mean value for diagnostic or statistical visualization.
-
 ## Instructions
 
 1. Import the VolumeRenderer (update the three.js import in the file)
