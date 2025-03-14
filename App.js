@@ -1,7 +1,7 @@
 import VolumeRenderer from './VolumeRenderer.js';
 
 import { OrbitControls } from './three.js/OrbitControls.js';
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.174.0/+esm';
+import * as THREE from './three.js/three.core.min.js';
 
 // Metadata for FDS soot visibility data
 const sootVisibilityMeta = {
