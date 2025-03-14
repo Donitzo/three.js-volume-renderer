@@ -17,10 +17,6 @@ void main() {
 const fragmentShader = `
 // RAY_STEPS:
 //   The number of steps to split the ray into across the volume.
-// BOUNDARY_STEPS:
-//   The number of steps to refine before crossing the first visible voxel boundary.
-// BOUNDARY_SUB_STEPS:
-//   The number of finer substeps to take per boundary step.
 
 #if RENDER_MEAN_VALUE == 0 && (USE_POINT_LIGHTS || USE_DIR_LIGHTS) || RENDER_NORMALS
 // The real-unit epsilon used when estimating the forward difference for normals
@@ -208,7 +204,6 @@ void main() {
     // Calculate the total volume ray intersection and step length
     float intersectionLength = length(exitPoint - entryPoint);
     float stepLength = intersectionLength / float(RAY_STEPS);
-    float subStepLength = stepLength / float(BOUNDARY_SUB_STEPS);
 
 #if RENDER_NORMALS == 0
  #if RENDER_MEAN_VALUE
@@ -224,9 +219,6 @@ void main() {
     gl_FragColor = vec4(0.0);
 #endif
 
-    // Substepping (visible pixel when under -10000 = start sub-stepping)
-    int subStepsLeft = -10000;
-
 #if USE_RANDOM_START
     // Add a random offset to the ray start length to 'fuzz' sharp edges
     float rand = mod(random + fract(sin(dot(rayDirection, vec3(12.9898, 78.233, 45.164))) * 43758.5453), 1.0);
@@ -237,12 +229,10 @@ void main() {
     float currentRayLength = -stepLength + 1e-6;
 #endif
 
-    // Loop over the ray steps + the steps required for substepping
-    for (int i = 0; i < RAY_STEPS + BOUNDARY_STEPS * BOUNDARY_SUB_STEPS; i++) {
-        // Advance the ray with regular or substepping
-        float currentStepLength = mix(stepLength, subStepLength, step(0.5, float(subStepsLeft)));
-        currentRayLength += currentStepLength;
-        subStepsLeft--;
+    // Loop over the ray steps
+    for (int i = 0; i < RAY_STEPS; i++) {
+        // Advance the ray
+        currentRayLength += stepLength;
 
         // Mask steps outside the bounding volume (a mask is used to avoid conditional branching)
         float stepWeight = 1.0 - step(intersectionLength - 1e-6, currentRayLength);
@@ -262,12 +252,6 @@ void main() {
         // Only consider values inside the cutoff range
         stepWeight *= step(minCutoffValue, scaledValue) * step(scaledValue, maxCutoffValue);
 
-        // If we first entered a visible voxel (or hit the depth buffer), rewind the step and start substepping
-        float startSubStepping = step(10000.0, -float(subStepsLeft) * stepWeight);
-        currentRayLength -= currentStepLength * startSubStepping;
-        subStepsLeft = int(mix(float(subStepsLeft), float(BOUNDARY_STEPS * BOUNDARY_SUB_STEPS), startSubStepping) + 0.5);
-        stepWeight *= 1.0 - startSubStepping;
-
 #if USE_VOLUMETRIC_DEPTH_TEST
         // Mask areas behind the depth buffer
         stepWeight *= step(currentRayLength + tNear, depth);
@@ -275,8 +259,8 @@ void main() {
 
 #if RENDER_MEAN_VALUE && RENDER_NORMALS == 0
         // Accumulate weighted value for the mean value
-        valueSum += scaledValue * currentStepLength * stepWeight;
-        weightSum += currentStepLength * stepWeight;
+        valueSum += scaledValue * stepLength * stepWeight;
+        weightSum += stepLength * stepWeight;
 #else
  #if USE_POINT_LIGHTS || USE_DIR_LIGHTS || RENDER_NORMALS
         // Approximate normal using forward difference
@@ -336,10 +320,10 @@ void main() {
         float alpha = 1.0;
   #elif USE_VALUE_AS_EXTINCTION_COEFFICIENT
         // Calculate the blending alpha from the value as extinction coefficient
-        float alpha = 1.0 - exp(-scaledValue * extinctionMultiplier * currentStepLength);
+        float alpha = 1.0 - exp(-scaledValue * extinctionMultiplier * stepLength);
   #else
         // Calculate the blending alpha from the extinction coefficient
-        float alpha = 1.0 - exp(-extinctionCoefficient * extinctionMultiplier * currentStepLength);
+        float alpha = 1.0 - exp(-extinctionCoefficient * extinctionMultiplier * stepLength);
   #endif
         // If ignored, set 0 alpha
         alpha *= stepWeight * alphaMultiplier;
@@ -519,8 +503,6 @@ export default class VolumeRenderer extends THREE.Mesh {
      * @param {boolean} [options.invertNormals=false] - Whether to invert all surface normals.
      * @param {boolean} [options.renderNormals=false] - Whether to render normals at the first surface hit.
      * @param {number} [options.raySteps=64] - The number of steps to split the ray into across the volume.
-     * @param {number} [options.boundarySteps=2] - The number of steps to refine before crossing the first visible voxel boundary.
-     * @param {number} [options.boundarySubSteps=8] - The number of substeps to take per boundary step to better capture visible boundaries.
      */
     updateMaterial(options = Object.create(null)) {
         const customFunction = options.customFunction ?? null;
@@ -538,8 +520,6 @@ export default class VolumeRenderer extends THREE.Mesh {
             INVERT_NORMALS: +(options.invertNormals ?? false),
             RENDER_NORMALS: +(options.renderNormals ?? false),
             RAY_STEPS: options.raySteps ?? 64,
-            BOUNDARY_STEPS: options.boundarySteps ?? 2,
-            BOUNDARY_SUB_STEPS: options.boundarySubSteps ?? 8,
         };
 
         const lights = !!defines.USE_POINT_LIGHTS || !!defines.USE_DIR_LIGHTS;

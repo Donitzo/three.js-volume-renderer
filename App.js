@@ -284,8 +284,6 @@ return 0.5 * log(r) * r / dr * 10.0 + 1.0;
             renderNormals: false,
 
             raySteps: 64,
-            boundarySteps: 2,
-            boundarySubSteps: 8,
 
             functionPreset: 'Pulsing Sphere',
             useCustomFunction: false,
@@ -463,18 +461,6 @@ return 0.5 * log(r) * r / dr * 10.0 + 1.0;
                 this.#volumeRenderer.updateMaterial(options);
             })
             .domElement.title = 'The number of steps to split the ray into across the volume (with a variable step size).';
-        folderRay.add(options, 'boundarySteps', 0, 8, 1)
-            .name('Boundary Steps')
-            .onChange(() => {
-                this.#volumeRenderer.updateMaterial(options);
-            })
-            .domElement.title = 'The number of steps to refine before crossing the first visible voxel boundary (1 is enough for solid surfaces).';
-        folderRay.add(options, 'boundarySubSteps', 2, 32, 1)
-            .name('Boundary Substeps')
-            .onChange(() => {
-                this.#volumeRenderer.updateMaterial(options);
-            })
-            .domElement.title = 'The number of substeps per boundary step to better capture visible boundaries (higher number = sharper surfaces).';
 
         // Other settings
         const folderOther = gui.addFolder('Other Settings');
