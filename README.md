@@ -2,6 +2,8 @@
 
 A lightweight volume renderer for [three.js](https://threejs.org/) that uses raymarching to render procedurally defined or data-driven 3D volumes in real time.
 
+<img width="60%" src="./images/interface.png" />
+
 **Try the demo on GitHub pages:** [https://donitzo.github.io/three.js-volume-renderer](https://donitzo.github.io/three.js-volume-renderer)
 
 ## Description
