@@ -66,10 +66,8 @@ When alpha blending is used, an extinction coefficient determines how much light
 4. Update shader defines and uniforms
    - The shader’s behavior is configured by defines, which you can set via `volumeRenderer.updateMaterial(...)`.  
    - There are many different uniforms to configure under `volumeRenderer.uniforms`. Look in the class for the documentation. 
-   - If you want animated effects (like pulsing or noise dithering), you can update these uniforms every frame in your render loop:
+   - Update these uniforms each frame in your main loop:
      ```js
-     // In your animation loop:
-     const dt = clock.getDelta(); // or however you track delta time
      volumeRenderer.uniforms.time.value += dt;
      volumeRenderer.uniforms.random.value = Math.random();
      ```
