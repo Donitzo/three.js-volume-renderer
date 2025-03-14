@@ -11,7 +11,7 @@ import {
 	Plane,
 	Ray,
 	MathUtils
-} from 'https://cdn.jsdelivr.net/npm/three@0.174.0/+esm';
+} from './three.core.min.js';
 
 /**
  * Fires when the camera has been transformed by the controls.

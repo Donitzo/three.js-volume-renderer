@@ -1,4 +1,4 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.174.0/+esm';
+import * as THREE from './three.js/three.core.min.js';
 
 const vertexShader = `
 varying vec2 vUv;
