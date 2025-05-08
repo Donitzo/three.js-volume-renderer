@@ -340,6 +340,7 @@ void main() {
   #endif
 
         // Front-to-back alpha blending
+        alpha = clamp(alpha, 0.0, 1.0);
         alphaBlendedColor.rgb += color.rgb * color.a * (1.0 - alphaBlendedColor.a);
         alphaBlendedColor.a += (1.0 - alphaBlendedColor.a) * color.a;
  #endif
@@ -354,6 +355,7 @@ void main() {
 
     // Sample the mean color from the palette
     float alpha = step(minCutoffValue, meanValue) * step(meanValue, maxCutoffValue) * alphaMultiplier;
+    alpha = clamp(alpha, 0.0, 1.0);
     gl_FragColor = vec4(texture(palette, vec2(normalizedMean, 0.5)).rgb * alpha, alpha);
  #else
     // Use the alpha blended color
