@@ -70,12 +70,12 @@ When alpha blending is used, an extinction coefficient determines how much light
    ```
 
 3. Load or define volume data
-   - **Option A**: Call `volumeRenderer.createAtlasTexture(...)` to set up a 3D texture for your data, then fill it with actual values using `volumeRenderer.updateAtlasTexture(...)`.  
+   - **Option A**: Call `volumeRenderer.createAtlasTexture(...)` to set up a 3D texture for your data, then fill it with actual values using `volumeRenderer.updateAtlasTexture(...)`.
    - **Option B**: Provide a custom distance function in `volumeRenderer.updateMaterial({ customFunction: myGLSLFunction })`.
 
 4. Update shader defines and uniforms
-   - The shader’s behavior is configured by defines, which you can set via `volumeRenderer.updateMaterial(...)`.  
-   - There are many different uniforms to configure under `volumeRenderer.uniforms`. Look in the class for the documentation. 
+   - The shader’s behavior is configured by defines, which you can set via `volumeRenderer.updateMaterial(...)`.
+   - There are many different uniforms to configure under `volumeRenderer.uniforms`. Look in the class for the documentation.
    - Update these uniforms each frame in your main loop:
      ```js
      volumeRenderer.uniforms.time.value += dt;
@@ -84,14 +84,109 @@ When alpha blending is used, an extinction coefficient determines how much light
 
 **Note**: Keep in mind that the number of ray steps has a large impact on performance and quality. 32 steps is a reasonable compromise, but it can look okay at even less steps.
 
+## VolumeRenderer API
+
+### updateMaterial(options = {})
+
+Creates a new shader material based on provided options.
+
+#### Parameters
+- **options.customFunction** `string|null`
+  A custom GLSL function that overrides the default volume sampling.
+
+  When provided, this function is injected into the fragment shader to calculate
+  the sampled scalar value at a given voxel position and time step.
+
+  ### Expected Signature
+  ```glsl
+  float sampleValue(float x, float y, float z, float t) {
+      // x, y, z: local position inside the volume (in world-space units relative to volumeOrigin)
+      // t:       current time
+      // return:  scalar value at that point
+  }
+  ```
+- **options.useVolumetricDepthTest** `boolean` (default: `false`)
+  Enables volumetric depth testing (expects `uniform.depthTexture` to be set).
+
+- **options.useExtinctionCoefficient** `boolean` (default: `true`)
+  Enables extinction coefficient for alpha blending.
+
+- **options.useValueAsExtinctionCoefficient** `boolean` (default: `false`)
+  Uses the sampled value as the extinction coefficient (such as when you use CE as a scalar field).
+
+- **options.usePointLights** `boolean` (default: `false`)
+  Enables point lights (normals are estimated, decreases performance).
+
+- **options.useDirectionalLights** `boolean` (default: `false`)
+  Enables directional lights (normals are estimated, decreases performance).
+
+- **options.useRandomStart** `boolean` (default: `true`)
+  Randomizes ray start position to soften edges.
+
+- **options.renderMeanValue** `boolean` (default: `false`)
+  Renders the mean value across the volume instead of alpha blending.
+
+- **options.invertNormals** `boolean` (default: `false`)
+  Inverts all surface normals.
+
+- **options.renderNormals** `boolean` (default: `false`)
+  Renders surface normals at the first hit (normals are estimated, decreases performance).
+
+- **options.raySteps** `number` (default: `64`)
+  Number of ray steps for sampling. Scales linearly with performance.
+
+---
+
+### createAtlasTexture(volumeResolution, volumeOrigin, voxelSize, timeCount, textureFilter = THREE.LinearFilter)
+
+Creates a half-precision 3D atlas texture and updates uniforms.
+
+#### Parameters
+- **volumeResolution** `THREE.Vector3`
+  3D resolution (voxel count) of one volume.
+
+- **volumeOrigin** `THREE.Vector3`
+  3D world-space origin of the volume.
+
+- **voxelSize** `THREE.Vector3`
+  Physical 3D size of one voxel.
+
+- **timeCount** `number`
+  Total number of timesteps.
+
+- **textureFilter** `number` (default: `THREE.LinearFilter`)
+  Texture interpolation mode.
+
+---
+
+### updateAtlasTexture(sampler, timeOffset = null, timeCount = null)
+
+Samples new values into the 3D atlas texture.
+
+#### Parameters
+- **sampler** `Function`
+  Function signature:
+  `(xi:number, yi:number, zi:number, x:number, y:number, z:number, ti:number) => number`
+
+- **timeOffset** `number|null`
+  Starting time index (default: `0`).
+
+- **timeCount** `number|null`
+  Number of timesteps to update (default: full atlas count).
+
+#### Returns
+- **object** containing:
+  - `minValue` `number` – minimum sampled value.
+  - `maxValue` `number` – maximum sampled value.
+
 ## Attribution
 
 - [NIFTI-Reader-JS](https://github.com/rii-mango/NIFTI-Reader-JS) - MIT
 
-- Smoke created using [FDS](https://pages.nist.gov/fds-smv/)  
-- Skybox by [Paul Debevec](https://www.pauldebevec.com/)  
-- [Chris MRI](https://github.com/neurolabusc/niivue-images) from McCausland Center for Brain Imaging — [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/)  
-- [Desert Iguana](https://digimorph.org/specimens/Dipsosaurus_dorsalis/) from Dr. Jessie Maisano, University of Texas High-Resolution X-ray CT Facility Archive 0787 — [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/)  
+- Smoke created using [FDS](https://pages.nist.gov/fds-smv/)
+- Skybox by [Paul Debevec](https://www.pauldebevec.com/)
+- [Chris MRI](https://github.com/neurolabusc/niivue-images) from McCausland Center for Brain Imaging — [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/)
+- [Desert Iguana](https://digimorph.org/specimens/Dipsosaurus_dorsalis/) from Dr. Jessie Maisano, University of Texas High-Resolution X-ray CT Facility Archive 0787 — [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/)
 
 ## Feedback & Bug Reports
 
