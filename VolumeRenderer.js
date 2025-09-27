@@ -337,6 +337,7 @@ void main() {
 
         // Calculate edge opacity (fades out values near the cutoff range)
         alpha *= smoothstep(0.0, cutoffFadeRange + 1e-6, min(scaledValue - minCutoffValue, maxCutoffValue - scaledValue));
+        alpha = clamp(alpha, 0.0, 1.0);
 
         // Sample the palette to get color
         vec4 color = vec4(texture(palette, vec2(normalizedValue, 0.5)).rgb, alpha);
@@ -347,7 +348,6 @@ void main() {
   #endif
 
         // Front-to-back alpha blending
-        alpha = clamp(alpha, 0.0, 1.0);
         alphaBlendedColor.rgb += color.rgb * color.a * (1.0 - alphaBlendedColor.a);
         alphaBlendedColor.a += (1.0 - alphaBlendedColor.a) * color.a;
  #endif
