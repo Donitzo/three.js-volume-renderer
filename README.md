@@ -83,7 +83,7 @@ When alpha blending is used, an extinction coefficient determines how much light
 
 ## Attribution
 
-- [nifti_reader](https://github.com/rii-mango/NIFTI-Reader-JS) - MIT
+- [NIFTI-Reader-JS](https://github.com/rii-mango/NIFTI-Reader-JS) - MIT
 
 - Smoke created using [FDS](https://pages.nist.gov/fds-smv/)  
 - Skybox by [Paul Debevec](https://www.pauldebevec.com/)  
