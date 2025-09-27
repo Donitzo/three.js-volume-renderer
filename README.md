@@ -71,6 +71,15 @@ When alpha blending is used, an extinction coefficient determines how much light
      volumeRenderer.uniforms.random.value = Math.random();
      ```
 
+## Attribution
+
+- [nifti_reader](https://github.com/rii-mango/NIFTI-Reader-JS)) - MIT
+
+- Smoke created using [FDS](https://pages.nist.gov/fds-smv/)  
+- Skybox by [Paul Debevec](https://www.pauldebevec.com/)  
+- [Chris MRI](https://github.com/neurolabusc/niivue-images) from McCausland Center for Brain Imaging — [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/)  
+- [Desert Iguana](https://digimorph.org/specimens/Dipsosaurus_dorsalis/) from Dr. Jessie Maisano, University of Texas High-Resolution X-ray CT Facility Archive 0787 — [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/)  
+
 ## Feedback & Bug Reports
 
 If there are additional variations you would find useful, or if you find any bugs or have other feedback, please [open an issue](https://github.com/Donitzo/three.js-volume-renderer/issues).
