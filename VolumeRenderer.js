@@ -30,11 +30,15 @@ uniform sampler2D palette;
 uniform float minPaletteValue;
 uniform float maxPaletteValue;
 #endif
-// Value multiplier
+// Value multiplier and added
 uniform float valueMultiplier;
+uniform float valueAdded;
 // Values outside this range are ignored (affects alpha blending and mean calculations)
 uniform float minCutoffValue;
 uniform float maxCutoffValue;
+// Clipping planes
+uniform vec3 clipMin;
+uniform vec3 clipMax;
 
 #if RENDER_MEAN_VALUE == 0 && USE_EXTINCTION_COEFFICIENT && RENDER_NORMALS == 0
  #if USE_VALUE_AS_EXTINCTION_COEFFICIENT == 0
@@ -180,8 +184,11 @@ void main() {
 #endif
 
     // Calculate ray-box intersection
-    vec3 t1 = (volumeOrigin - rayOrigin) / rayDirection;
-    vec3 t2 = (volumeMax - rayOrigin) / rayDirection;
+    vec3 boxMin = max(volumeOrigin, clipMin);
+    vec3 boxMax = min(volumeMax, clipMax);
+
+    vec3 t1 = (boxMin - rayOrigin) / rayDirection;
+    vec3 t2 = (boxMax - rayOrigin) / rayDirection;
 
     vec3 tMin = min(t1, t2);
     vec3 tMax = max(t1, t2);
@@ -190,8 +197,8 @@ void main() {
     float tFar = min(min(tMax.x, tMax.y), tMax.z);
 
     // If the ray starts outside the volume and does not hit the box, discard the fragment
-    bool insideBox = all(greaterThanEqual(rayOrigin, volumeOrigin)) &&
-        all(lessThanEqual(rayOrigin, volumeMax));
+    bool insideBox = all(greaterThanEqual(rayOrigin, boxMin)) &&
+        all(lessThanEqual(rayOrigin, boxMax));
 
     if (!insideBox && (tNear > tFar || tFar < 0.0)) {
         discard;
@@ -247,7 +254,7 @@ void main() {
 #else
         float sampledValue = sampleValue(position, volumeUvOffset0, volumeUvOffset1, volumeT);
 #endif
-        float scaledValue = sampledValue * valueMultiplier;
+        float scaledValue = sampledValue * valueMultiplier + valueAdded;
 
         // Only consider values inside the cutoff range
         stepWeight *= step(minCutoffValue, scaledValue) * step(scaledValue, maxCutoffValue);
@@ -396,6 +403,12 @@ void main() {
  *   - The physical size of a single voxel.
  *     [Active only when USE_CUSTOM_VALUE_FUNCTION is disabled]
  *
+ * @property {THREE.Vector3} clipMin
+ *   - The 3 minimum clipping planes.
+ *
+ * @property {THREE.Vector3} clipMax
+ *   - The 3 maximum clipping planes.
+ *
  * @property {number} timeCount
  *   - Total number of volumes (timesteps) stored in the atlas.
  *     [Active only when USE_CUSTOM_VALUE_FUNCTION is disabled]
@@ -430,6 +443,9 @@ void main() {
  * @property {number} valueMultiplier
  *   - Multiplier applied to sampled values.
  *
+ * @property {number} valueAdded
+ *   - Value added to sampled values.
+ *
  * @property {number} extinctionCoefficient
  *   - Fixed extinction coefficient used for alpha blending.
  *     [Active only when USE_EXTINCTION_COEFFICIENT is enabled, USE_VALUE_AS_EXTINCTION_COEFFICIENT and RENDER_NORMALS is disabled]
@@ -458,6 +474,8 @@ export default class VolumeRenderer extends THREE.Mesh {
         atlasResolution:       { value: new THREE.Vector3() },
         volumeResolution:      { value: new THREE.Vector3() },
         voxelSize:             { value: new THREE.Vector3() },
+        clipMin:               { value: new THREE.Vector3(-1e10, -1e10, -1e10) },
+        clipMax:               { value: new THREE.Vector3(1e10, 1e10, 1e10) },
         timeCount:             { value: 0.0 },
 
         time:                  { value: 0.0 },
@@ -472,6 +490,7 @@ export default class VolumeRenderer extends THREE.Mesh {
         maxCutoffValue:        { value: 1.0 - 1e-3 },
         cutoffFadeRange:       { value: 0.0 },
         valueMultiplier:       { value: 1.0 },
+        valueAdded:            { value: 0.0 },
 
         extinctionCoefficient: { value: 1.0 },
         extinctionMultiplier:  { value: 1.0 },
@@ -528,7 +547,6 @@ export default class VolumeRenderer extends THREE.Mesh {
 
         // Put together a new uniforms object referencing only the relevant uniforms
         const uniforms = lights ? THREE.UniformsUtils.merge([THREE.UniformsLib['lights'], {}]) : {};
-
         uniforms.volumeOrigin = this.uniforms.volumeOrigin;
         uniforms.time = this.uniforms.time;
         uniforms.random = this.uniforms.random;
@@ -536,6 +554,9 @@ export default class VolumeRenderer extends THREE.Mesh {
         uniforms.maxCutoffValue = this.uniforms.maxCutoffValue;
         uniforms.cutoffFadeRange = this.uniforms.cutoffFadeRange;
         uniforms.valueMultiplier = this.uniforms.valueMultiplier;
+        uniforms.valueAdded = this.uniforms.valueAdded;
+        uniforms.clipMin = this.uniforms.clipMin;
+        uniforms.clipMax = this.uniforms.clipMax;
 
         if (defines.RENDER_NORMALS || (!defines.RENDER_MEAN_VALUE &&
             (defines.USE_POINT_LIGHTS || defines.USE_DIR_LIGHTS))) {

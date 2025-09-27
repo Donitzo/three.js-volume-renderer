@@ -16,7 +16,6 @@ body {
 .info {
     box-sizing: border-box;
     color: #fff;
-    font-size: 120%;
     padding: 10px;
     position: absolute;
     text-align: center;
@@ -38,6 +37,7 @@ body {
     right: 266px;
     resize: none;
     top: 5px;
+    visibility: hidden;
     width: 300px;
 }
 
@@ -54,12 +54,22 @@ import './App.js';
         </script>
     </head>
     <body>
-        <div class="info">
-            <a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> - volume renderer
-            (<a href="https://github.com/Donitzo/three.js-volume-renderer" target="_blank" rel="noopener">GitHub</a>)<br/>
-            Smoke example created using <a href="https://pages.nist.gov/fds-smv/" target="_blank" rel="noopener">Fire Dynamics Simulator</a><br/>
-            Skybox by <a href="https://www.pauldebevec.com/" target="_blank" rel="noopener">Paul Debevec</a><br/>
-        </div>
+    <div class="info">
+        <a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> - volume renderer
+        (<a href="https://github.com/Donitzo/three.js-volume-renderer" target="_blank" rel="noopener">GitHub</a>)
+        <details>
+            <summary>Scan and background attribution</summary>
+            <div>
+                Smoke created using <a href="https://pages.nist.gov/fds-smv/" target="_blank" rel="noopener">FDS</a><br/>
+                Skybox by <a href="https://www.pauldebevec.com/" target="_blank" rel="noopener">Paul Debevec</a><br/>
+                <a href="https://github.com/neurolabusc/niivue-images" target="_blank" rel="noopener">Chris MRI</a> from McCausland Center for Brain Imaging. 
+                <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a><br/>
+                <a href="https://digimorph.org/specimens/Dipsosaurus_dorsalis/" target="_blank" rel="noopener">Desert Iguana</a> from Dr. Jessie Maisano, University of Texas High-Resolution X-ray CT Facility Archive 0787. 
+                <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a><br/>
+            </div>
+        </details>
+    </div>
+
 
         <textarea class="glsl"></textarea>
 
