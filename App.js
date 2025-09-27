@@ -332,8 +332,10 @@ return 0.5 * log(r) * r / dr * 10.0 + 1.0;
                 valueAddedElement.updateDisplay();
             }
             
-            this.#timeRange.value = timeCount * header.pixDims[4];
+            this.#timeRange.value = timeCount;
+            this.#timescale.value = 1 / header.pixDims[4];
             this.#timeElement.max(this.#timeRange.value);
+            timescaleElement.updateDisplay();
             timeRangeElement.updateDisplay();
         };
 
@@ -428,9 +430,9 @@ return 0.5 * log(r) * r / dr * 10.0 + 1.0;
         this.#timeElement = timeFolder.add(this.#time, 'value', 0, this.#timeRange.value)
             .name('Time Index')
         this.#timeElement.domElement.title = 'Simulation time index.';
-        timeFolder.add(this.#timescale, 'value', 0, 8)
-            .name('Time Scale')
-            .domElement.title = 'Simulation time scale.';
+        const timescaleElement = timeFolder.add(this.#timescale, 'value', 0, 8)
+            .name('Time Scale');
+        timescaleElement.domElement.title = 'Simulation time scale.';
 
         // Palette settings
         const palettes = ['Viridis', 'Rainbow', 'Plasma', 'Hot', 'Gray', 'Smoke', 'White'];
