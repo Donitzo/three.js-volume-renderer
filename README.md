@@ -8,7 +8,7 @@ A lightweight volume renderer for [three.js](https://threejs.org/) that uses ray
 
 ## Description
 
-The volume renderer is implemented as a single `VolumeRenderer` class that extends `THREE.Mesh` with a raymarching fragment shader. You can either provide your own 3D volumetric data or supply a custom function in GLSL to create complex procedural shapes or surfaces. The demo 3D volume data is the soot visibility from a smoke simulation rendered using the [Fire Dynamics Simulator](https://pages.nist.gov/fds-smv/).
+The volume renderer is implemented as a single `VolumeRenderer` class that extends `THREE.Mesh` with a raymarching fragment shader. You can either provide your own 3D volumetric data or supply a custom function in GLSL to create complex procedural shapes or surfaces.
 
 The renderer works as a fullscreen postprocessing effect which renders on top of existing geometry.
 
