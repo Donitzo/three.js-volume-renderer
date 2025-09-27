@@ -124,12 +124,12 @@ return length(p) + 0.1 * sin(t);
 vec3 p = vec3(x, y, z) - vec3(1.0);
 return sin(length(p) * 10.0 - t * 4.0);
 `,
-            // Cube defined by the Chebyshev distance (scaled by 2)
+            // Cube defined by the Chebyshev distance
             'Cube': `
 vec3 p = vec3(x, y, z) - vec3(1.0);
 return max(max(abs(p.x), abs(p.y)), abs(p.z)) * 2.0;
 `,
-            // Cube that spins over time around the Y-axis (scaled by 2)
+            // Cube that spins over time around the Y-axis
             'Spinning Cube': `
 vec3 p = vec3(x, y, z) - vec3(1.0);
 float cx = cos(t);
