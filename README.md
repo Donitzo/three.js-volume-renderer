@@ -82,6 +82,8 @@ When alpha blending is used, an extinction coefficient determines how much light
      volumeRenderer.uniforms.random.value = Math.random();
      ```
 
+**Note**: Keep in mind that the number of ray steps has a large impact on performance and quality.
+
 ## Attribution
 
 - [NIFTI-Reader-JS](https://github.com/rii-mango/NIFTI-Reader-JS) - MIT
