@@ -14,7 +14,7 @@ The renderer works as a fullscreen postprocessing effect which renders on top of
 
 The volume renderer features:
 
-- Define-based conditional compilation of shader to keep it lightweight.
+- Shader features can be toggled at compile-time using `#define` directives, keeping it lightweight and versatile for different use cases, e.g. for in-game smoke, MRI scans, and other volumetric data.
 - Normal estimation for lighting.
 - Depth testing.
 - Clip planes.
