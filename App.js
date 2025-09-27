@@ -333,7 +333,7 @@ return 0.5 * log(r) * r / dr * 10.0 + 1.0;
             }
             
             this.#timeRange.value = timeCount;
-            this.#timescale.value = 1 / (header.pixDims[4] === 0 ? 1 : (header.pixDims[4] ?? 1));
+            this.#timescale.value = timeCount === 1 ? 0 : 1 / (header.pixDims[4] === 0 ? 1 : (header.pixDims[4] ?? 1));
             this.#timeElement.max(this.#timeRange.value);
             timescaleElement.updateDisplay();
             timeRangeElement.updateDisplay();
