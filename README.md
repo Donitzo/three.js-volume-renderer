@@ -82,7 +82,7 @@ When alpha blending is used, an extinction coefficient determines how much light
      volumeRenderer.uniforms.random.value = Math.random();
      ```
 
-**Note**: Keep in mind that the number of ray steps has a large impact on performance and quality.
+**Note**: Keep in mind that the number of ray steps has a large impact on performance and quality. 32 steps is a reasonable compromise, but it can look okay at even less steps.
 
 ## Attribution
 
