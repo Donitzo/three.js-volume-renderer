@@ -232,7 +232,7 @@ Real-unit epsilon used for estimating normals via forward differences.
 or when `renderMeanValue` is `false` **and** (`usePointLights` or `useDirectionalLights` is `true`).*
 
 #### `palette`
-Horizontal palette texture for mapping sampled values to colors.  
+Horizontal palette texture for mapping sampled values to colors. Should be a horizontal palette.
 *Active only when `renderNormals` is `false`.*
 
 #### `minPaletteValue`
