@@ -180,6 +180,102 @@ Samples new values into the 3D atlas texture.
   - `minValue` `number` – minimum sampled value.
   - `maxValue` `number` – maximum sampled value.
 
+### Material uniforms
+
+#### `depthTexture`
+Depth texture for volumetric depth testing.  
+*Active only when `useVolumetricDepthTest` is `true`.*
+
+#### `volumeOrigin`
+The world-space origin of the volume.
+
+#### `volumeSize`
+The world-space size of the volume.  
+*Active only when `customFunction` is provided.*
+
+#### `volumeAtlas`
+The 3D texture containing packed volume data.  
+*Active only when `customFunction` is **not** provided.*
+
+#### `atlasResolution`
+Number of volumes packed along each axis in the atlas.  
+*Active only when `customFunction` is **not** provided.*
+
+#### `volumeResolution`
+Resolution (voxel count) of a single volume.  
+*Active only when `customFunction` is **not** provided.*
+
+#### `voxelSize`
+The physical size of a single voxel.  
+*Active only when `customFunction` is **not** provided.*
+
+#### `clipMin`
+Minimum clipping planes (XYZ).
+
+#### `clipMax`
+Maximum clipping planes (XYZ).
+
+#### `timeCount`
+Total number of volumes (timesteps) stored in the atlas.  
+*Active only when `customFunction` is **not** provided.*
+
+#### `time`
+The current time, represented either as a fractional volume index or as the time parameter for the custom function.
+
+#### `random`
+A random value used when initializing rays.  
+Helps “fuzz” ray starts when `useRandomStart` is `true`.
+
+#### `normalEpsilon`
+Real-unit epsilon used for estimating normals via forward differences.  
+*Active when `renderNormals` is `true`,  
+or when `renderMeanValue` is `false` **and** (`usePointLights` or `useDirectionalLights` is `true`).*
+
+#### `palette`
+Horizontal palette texture for mapping sampled values to colors.  
+*Active only when `renderNormals` is `false`.*
+
+#### `minPaletteValue`
+Minimum value used for palette mapping.  
+*Active only when `renderNormals` is `false`.*
+
+#### `maxPaletteValue`
+Maximum value used for palette mapping.  
+*Active only when `renderNormals` is `false`.*
+
+#### `minCutoffValue`
+Minimum cutoff value.  
+Sampled values below this threshold are discarded.
+
+#### `maxCutoffValue`
+Maximum cutoff value.  
+Sampled values above this threshold are discarded.
+
+#### `cutoffFadeRange`
+Range near the cutoff where alpha fades to zero.  
+*Active only when `renderMeanValue` is `false`.*
+
+#### `valueMultiplier`
+Multiplier applied to sampled values.
+
+#### `valueAdded`
+Constant added to sampled values after multiplication.
+
+#### `extinctionCoefficient`
+Fixed extinction coefficient used for alpha blending.  
+*Active only when `useExtinctionCoefficient` is `true`,  
+`useValueAsExtinctionCoefficient` is `false`,  
+and `renderNormals` is `false`.*
+
+#### `extinctionMultiplier`
+Multiplier applied to the extinction coefficient.  
+*Active only when `useExtinctionCoefficient` is `true`  
+and `renderNormals` is `false`.*
+
+#### `alphaMultiplier`
+Multiplier applied to the final alpha value.  
+*Active only when `renderNormals` is `false`.*
+
 ## Attribution
 
 - [NIFTI-Reader-JS](https://github.com/rii-mango/NIFTI-Reader-JS) - MIT
