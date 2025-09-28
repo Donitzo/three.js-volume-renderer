@@ -100,9 +100,10 @@ Creates a new shader material based on provided options.
   ### Expected Signature
   ```glsl
   float sampleValue(float x, float y, float z, float t) {
-      // x, y, z: local position inside the volume (in world-space units relative to volumeOrigin)
-      // t:       current time
-      // return:  scalar value at that point
+    {your custom code goes here, do not include function definition}
+    // x, y, z: local position inside the volume (in world-space units relative to volumeOrigin)
+    // t:       current time
+    // return:  scalar value at that point
   }
   ```
 - **options.useVolumetricDepthTest** `boolean` (default: `false`)
