@@ -75,7 +75,7 @@ When alpha blending is used, an extinction coefficient determines how much light
 
 4. Update shader defines and uniforms
    - The shader’s behavior is configured by defines, which you can set via `volumeRenderer.updateMaterial(...)`.
-   - There are many different uniforms to configure under `volumeRenderer.uniforms`. Look in the class for the documentation.
+   - There are many different uniforms to configure under `volumeRenderer.uniforms`.
    - Update these uniforms each frame in your main loop:
      ```js
      volumeRenderer.uniforms.time.value += dt;
