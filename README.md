@@ -56,7 +56,7 @@ Raymarching is a rendering technique where, for each pixel, we cast a ray into a
 
 When alpha blending is used, an extinction coefficient determines how much light is absorbed at each step, allowing you to see through semi-transparent volumes like smoke or mist. If lighting is enabled, we also estimate a normal at each step by computing the forward difference of the volume data, letting you illuminate the volume with directional or point lights.
 
-This ray marcher always takes a fixed number of steps along the ray, constrained to the intersecting volume. In the worst case, the ray spans the diagonal of the volume, and those steps are evenly distributed across that distance.
+This raymarcher always takes a fixed number of steps along the ray, constrained to the intersecting volume. In the worst case, the ray spans the diagonal of the volume, and those steps are evenly distributed across that distance.
 
 ## Instructions
 
