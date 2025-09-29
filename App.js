@@ -3,7 +3,9 @@ import VolumeSamplers from './VolumeSamplers.js';
 
 import nifti from './nifti-reader.js';
 
+import { OBJLoader } from './three.js/OBJLoader.js';
 import { OrbitControls } from './three.js/OrbitControls.js';
+import * as BufferGeometryUtils from './three.js/BufferGeometryUtils.js';
 import * as THREE from './three.js/three.module.min.js';
 
 const samples = {
@@ -265,16 +267,18 @@ return 0.5 * log(r) * r / dr * 10.0 + 1.0;
             },
 
             niftiSample: 'Animated Smoke',
-            niftiFile: null,
+
+            sampleResolution: 32,
 
             createTorus: () => {
                 const geometry = new THREE.TorusKnotGeometry(0.5, 0.125);
                 const sampler = VolumeSamplers.createGeometrySdfSampler(geometry);
                 setUseCustomFunction(false, true);
+                const resolution = options.sampleResolution;
                 this.#volumeRenderer.createAtlasTexture(
-                    new THREE.Vector3(32, 32, 32),
+                    new THREE.Vector3(resolution, resolution, resolution),
                     new THREE.Vector3(-1, -1, -1),
-                    new THREE.Vector3(2 / 32, 2 / 32, 2 / 32),
+                    new THREE.Vector3(2 / resolution, 2 / resolution, 2 / resolution),
                     1
                 );
                 this.#volumeRenderer.updateAtlasTexture((xi, yi, zi, x, y, z, t) => sampler(x, y, z) + 1);
@@ -353,6 +357,51 @@ return 0.5 * log(r) * r / dr * 10.0 + 1.0;
             timeRangeElement.updateDisplay();
         };
 
+        const loadObjFromFile = async file => {
+            const text = await file.text();
+            const loader = new OBJLoader();
+            const obj = loader.parse(text);
+            obj.updateMatrixWorld(true);
+
+            const box = new THREE.Box3().setFromObject(obj);
+            const size = new THREE.Vector3();
+            const center = new THREE.Vector3();
+            box.getSize(size);
+            box.getCenter(center);
+
+            const maxSide = Math.max(size.x, size.y, size.z);
+            const scale = 2 / maxSide;
+
+            const normalization = new THREE.Matrix4()
+                .makeTranslation(-center.x, -center.y, -center.z)
+                .multiply(new THREE.Matrix4().makeScale(scale, scale, scale));
+
+            obj.applyMatrix4(normalization);
+
+            const samplers = [];
+            obj.traverse(child => {
+                if (child.isMesh) {
+                    child.updateWorldMatrix(true);
+                    const geometry = BufferGeometryUtils.mergeVertices(child.geometry);
+                    samplers.push(
+                        VolumeSamplers.createGeometrySdfSampler(geometry, child.matrixWorld)
+                    );
+                }
+            });
+
+            const resolution = options.sampleResolution;
+            this.#volumeRenderer.createAtlasTexture(
+                new THREE.Vector3(resolution, resolution, resolution),
+                new THREE.Vector3(-1, -1, -1),
+                new THREE.Vector3(2 / resolution, 2 / resolution, 2 / resolution),
+                1
+            );
+
+            this.#volumeRenderer.updateAtlasTexture((xi, yi, zi, x, y, z, t) => {
+                return samplers.reduce((v, sampler) => Math.min(v, sampler(x, y, z) + 1), Infinity);
+            });
+        };
+
         const fileFolder = gui.addFolder('File');
 
         const loadSample = async (name, zeroValueAdded = true) => {
@@ -366,23 +415,44 @@ return 0.5 * log(r) * r / dr * 10.0 + 1.0;
             .name('Load Sample NIfTI file')
             .onChange(loadSample);
 
-        const fileInput = document.createElement('input');
-        fileInput.type = 'file';
-        fileInput.accept = '.nii,.nii.gz';
-        fileInput.style.display = 'none';
-
-        fileInput.addEventListener('change', async event => {
+        const niftiInput = document.createElement('input');
+        niftiInput.type = 'file';
+        niftiInput.accept = '.nii,.nii.gz';
+        niftiInput.style.display = 'none';
+        niftiInput.addEventListener('change', async event => {
             const file = event.target.files[0];
-            if (!file) return;
+            if (!file) {
+                return;
+            }
             const data = await file.arrayBuffer();
             await loadNiftiFromArrayBuffer(data, true);
         });
 
+        const objInput = document.createElement('input');
+        objInput.type = 'file';
+        objInput.accept = '.obj';
+        objInput.style.display = 'none';
+        objInput.addEventListener('change', async event => {
+            const file = event.target.files[0];
+            if (!file) {
+                return;
+            }
+            await loadObjFromFile(file);
+        });
+
         fileFolder.add({ load: () => {
-            fileInput.click()
+            niftiInput.click()
         }}, 'load')
             .name('Load NIfTI file')
             .domElement.title = 'Load 4D volume from NIfTI file.';
+        fileFolder.add(options, 'sampleResolution', 2, 128, 1)
+            .name('Sampling resolution')
+            .domElement.title = 'Resolution used when sampling OBJ files or the torus.';
+        fileFolder.add({ load: () => {
+            objInput.click();
+        }}, 'load')
+            .name('Load OBJ file')
+            .domElement.title = 'Load and sample a mesh from an OBJ file.';
 
         fileFolder.add(options, 'createTorus')
             .name('Sample torus knot geometry')
