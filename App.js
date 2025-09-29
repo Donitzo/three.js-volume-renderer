@@ -529,10 +529,10 @@ return 0.5 * log(r) * r / dr * 10.0 + 1.0;
                 this.#timeElement.max(value);
             });
         timeRangeElement.domElement.title = 'Simulation time range.';
-        this.#timeElement = timeFolder.add(this.#time, 'value', 0, this.#timeRange.value)
+        this.#timeElement = timeFolder.add(this.#time, 'value', 0, this.#timeRange.value, 0.001)
             .name('Time Index')
         this.#timeElement.domElement.title = 'Simulation time index.';
-        const timescaleElement = timeFolder.add(this.#timescale, 'value', 0, 8)
+        const timescaleElement = timeFolder.add(this.#timescale, 'value', 0, 8, 0.001)
             .name('Time Scale');
         timescaleElement.domElement.title = 'Simulation time scale.';
 
