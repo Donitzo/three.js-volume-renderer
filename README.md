@@ -279,6 +279,26 @@ and `renderNormals` is `false`.*
 Multiplier applied to the final alpha value.  
 *Active only when `renderNormals` is `false`.*
 
+### Turning a `Three.Mesh` into a volume
+
+The provided `VolumeSamplers.js` utility class can turn a manifold `THREE.Mesh` (or just its geometry) into a Signed Distance Field (SDF) volume. 
+Here's an example that bakes a mesh into a `32³` atlas texture covering the volume:
+
+```js
+import VolumeSamplers from './VolumeSamplers.js';
+
+const sampler = VolumeSamplers.createMeshInstanceSdfSampler(mesh);
+
+volumeRenderer.createAtlasTexture(
+    new THREE.Vector3(32, 32, 32),
+    new THREE.Vector3(-1, -1, -1),
+    new THREE.Vector3(2 / 32, 2 / 32, 2 / 32),
+    1
+);
+
+volumeRenderer.updateAtlasTexture((xi, yi, zi, x, y, z, t) => sampler(x, y, z);
+```
+
 ## Attribution
 
 - [NIFTI-Reader-JS](https://github.com/rii-mango/NIFTI-Reader-JS) - MIT
