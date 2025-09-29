@@ -21,6 +21,7 @@ The volume renderer features:
 - Color palettes with transparent cutoff range.
 - Extinction coefficients for translucency.
 - Rendering of static or animated 3D volume data atlas texture. This could for example be an MRI or smoke.
+- Sampling from `THREE.Mesh` surfaces as volumetric shapes via `VolumeSamplers.js`.
 
 ### NIfTI Files
 

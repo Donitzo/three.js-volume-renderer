@@ -1,4 +1,5 @@
 import VolumeRenderer from './VolumeRenderer.js';
+import VolumeSamplers from './VolumeSamplers.js';
 
 import nifti from './nifti-reader.js';
 
@@ -265,6 +266,19 @@ return 0.5 * log(r) * r / dr * 10.0 + 1.0;
 
             niftiSample: 'Animated Smoke',
             niftiFile: null,
+
+            createTorus: () => {
+                const geometry = new THREE.TorusKnotGeometry(0.5, 0.125);
+                const sampler = VolumeSamplers.createGeometrySdfSampler(geometry);
+                setUseCustomFunction(false, true);
+                this.#volumeRenderer.createAtlasTexture(
+                    new THREE.Vector3(32, 32, 32),
+                    new THREE.Vector3(-1, -1, -1),
+                    new THREE.Vector3(2 / 32, 2 / 32, 2 / 32),
+                    1
+                );
+                this.#volumeRenderer.updateAtlasTexture((xi, yi, zi, x, y, z, t) => sampler(x, y, z) + 1);
+            },
         };
 
         // File
@@ -331,7 +345,7 @@ return 0.5 * log(r) * r / dr * 10.0 + 1.0;
                 uniforms.valueAdded.value =  0;
                 valueAddedElement.updateDisplay();
             }
-            
+
             this.#timeRange.value = timeCount;
             this.#timescale.value = timeCount === 1 ? 0 : 1 / (header.pixDims[4] === 0 ? 1 : (header.pixDims[4] ?? 1));
             this.#timeElement.max(this.#timeRange.value);
@@ -365,18 +379,22 @@ return 0.5 * log(r) * r / dr * 10.0 + 1.0;
         });
 
         fileFolder.add({ load: () => {
-            fileInput.click() 
+            fileInput.click()
         }}, 'load')
             .name('Load NIfTI file')
             .domElement.title = 'Load 4D volume from NIfTI file.';
+
+        fileFolder.add(options, 'createTorus')
+            .name('Sample torus knot geometry')
+            .domElement.title = 'Create and sample a torus geometry.';
 
         // Custom function
         const glslTextarea = document.querySelector('.glsl');
         glslTextarea.value = functionPresets[options.functionPreset].trim();
 
-        const setUseCustomFunction = use => {
+        const setUseCustomFunction = (use, skipLoadSample = false) => {
             glslTextarea.style.visibility = use ? 'visible' : 'hidden';
-            
+
             options.useCustomFunction = use;
             controlUseFunction.updateDisplay();
 
@@ -393,7 +411,9 @@ return 0.5 * log(r) * r / dr * 10.0 + 1.0;
                 options.customFunction = glslTextarea.value;
             } else {
                 options.customFunction = null;
-                loadSample(options.niftiSample);
+                if (!skipLoadSample) {
+                    loadSample(options.niftiSample);
+                }
             }
             this.#volumeRenderer.updateMaterial(options);
         };
