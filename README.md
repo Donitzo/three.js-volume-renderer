@@ -281,6 +281,8 @@ Multiplier applied to the final alpha value.
 
 ### Turning a `Three.Mesh` into a volume
 
+![](images/samples/sampled_torus_knot.png)
+
 The provided `VolumeSamplers.js` utility class can turn a manifold `THREE.Mesh` (or just its geometry) into a Signed Distance Field (SDF) volume. 
 Here's an example that bakes a mesh into a `32³` atlas texture covering the volume:
 
