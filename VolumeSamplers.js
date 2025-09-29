@@ -37,7 +37,7 @@ export default class VolumeSamplers {
             throw new Error('Geometry must be indexed');
         }
 
-        // Scratch vectors to avoid allocations
+        // Temporary vectors to avoid allocations
         const va = new THREE.Vector3();
         const vb = new THREE.Vector3();
         const vc = new THREE.Vector3();
@@ -146,3 +146,4 @@ export default class VolumeSamplers {
         };
     }
 }
+
