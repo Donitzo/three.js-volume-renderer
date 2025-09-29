@@ -363,28 +363,40 @@ return 0.5 * log(r) * r / dr * 10.0 + 1.0;
             const obj = loader.parse(text);
             obj.updateMatrixWorld(true);
 
-            const box = new THREE.Box3().setFromObject(obj);
+            const position = new THREE.Vector3();
+            const box = new THREE.Box3();
+
+            obj.traverse(child => {
+                if (child.isMesh) {
+                    const positions = child.geometry.attributes.position;
+                    for (let i = 0; i < positions.count; i++) {
+                        position.fromBufferAttribute(positions, i);
+                        box.expandByPoint(position);
+                    }
+                }
+            });
+
             const size = new THREE.Vector3();
             const center = new THREE.Vector3();
             box.getSize(size);
             box.getCenter(center);
-
             const maxSide = Math.max(size.x, size.y, size.z);
             const scale = 2 / maxSide;
-
-            const normalization = new THREE.Matrix4()
-                .makeTranslation(-center.x, -center.y, -center.z)
-                .multiply(new THREE.Matrix4().makeScale(scale, scale, scale));
-
-            obj.applyMatrix4(normalization);
 
             const samplers = [];
             obj.traverse(child => {
                 if (child.isMesh) {
-                    child.updateWorldMatrix(true);
-                    const geometry = BufferGeometryUtils.mergeVertices(child.geometry);
+                    const geometry = child.geometry.clone();
+
+                    const positions = geometry.attributes.position;
+                    for (let i = 0; i < positions.count; i++) {
+                        position.fromBufferAttribute(positions, i);
+                        position.sub(center).multiplyScalar(scale);
+                        positions.setXYZ(i, position.x, position.y, position.z);
+                    }
+                    const merged = BufferGeometryUtils.mergeVertices(geometry);
                     samplers.push(
-                        VolumeSamplers.createGeometrySdfSampler(geometry, child.matrixWorld)
+                        VolumeSamplers.createGeometrySdfSampler(merged, new THREE.Matrix4())
                     );
                 }
             });
