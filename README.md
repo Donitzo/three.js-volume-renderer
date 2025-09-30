@@ -25,11 +25,11 @@ The volume renderer features:
 
 ## What is Raymarching?
 
-Raymarching is a rendering technique where, for each pixel, we cast a ray into a scene and advance it in small steps. At each step along the ray, we sample volume data (e.g. density, extinction coefficient, distance function) and accumulate it (e.g., via alpha blending or by estimating a mean value) until the ray exits the volume. Unlike surface-based raymarchers that stop at the first hit, this approach processes the entire volume along the ray.
+Raymarching is a rendering technique where, for each pixel, we cast a ray into a scene and advance it in small steps (imagine a cone of WxH rays shooting out from the camera). At each step along the ray, we sample volume data (e.g. density, extinction coefficient, distance function) and accumulate it (e.g., via alpha blending or by estimating a mean value) until the ray exits the volume. Unlike surface-based raymarchers that stop at the first hit, this approach processes the entire volume along the ray.
 
 When alpha blending is used, an extinction coefficient determines how much light is absorbed at each step, allowing you to see through semi-transparent volumes like smoke or mist. If lighting is enabled, we also estimate a normal at each step by computing the forward difference of the volume data, letting you illuminate the volume with directional or point lights.
 
-This raymarcher always takes a fixed number of steps along the ray, constrained to the intersecting volume. In the worst case, the ray spans the diagonal of the volume, and those steps are evenly distributed across that distance.
+This raymarcher always takes a fixed number of steps along the ray, constrained to the intersecting volume. In the worst case, the ray spans the diagonal of the volume, and those steps are evenly distributed across that distance. Using a fixed step count ensures consistent loop length and predictable performance.
 
 ### NIfTI Files
 
