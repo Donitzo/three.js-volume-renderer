@@ -7,6 +7,7 @@ varying float far;
 varying mat4 invProjView;
 
 void main() {
+    // Fullscreen quad
     gl_Position = vec4(position.xy, 0.0, 1.0);
     vUv = uv;
     near = projectionMatrix[3][2] / (projectionMatrix[2][2] - 1.0);
@@ -15,9 +16,6 @@ void main() {
 }`;
 
 const fragmentShader = `
-// RAY_STEPS:
-//   The number of steps to split the ray into across the volume.
-
 #if RENDER_MEAN_VALUE == 0 && (USE_POINT_LIGHTS || USE_DIR_LIGHTS) || RENDER_NORMALS
 // The real-unit epsilon used when estimating the forward difference for normals
 uniform float normalEpsilon;
