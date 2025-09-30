@@ -85,6 +85,8 @@ volumeRenderer.updateAtlasTexture((xi, yi, zi, x, y, z, t) => sampler(x, y, z);
 
 Copy 'VolumeRenderer.js' into your project and import it. You most likely have to update the Three.js import path in the file.
 
+To run the demo app, simply clone the repo abd host it on a local server.
+
 ## Instructions
 
 1. Import the VolumeRenderer (update the three.js import in the file)
