@@ -330,7 +330,7 @@ return 0.5 * log(r) * r / dr * 10.0 + 1.0;
             this.#volumeRenderer.createAtlasTexture(
                 new THREE.Vector3(size[1], size[3], size[2]),
                 new THREE.Vector3(-1, -1, -1),
-                new THREE.Vector3(voxelSize.y, voxelSize.z, voxelSize.x),
+                new THREE.Vector3(voxelSize.x, voxelSize.z, voxelSize.y),
                 timeCount
             );
 
