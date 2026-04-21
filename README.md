@@ -126,7 +126,7 @@ Creates a new shader material based on provided options.
   A custom GLSL function that overrides the default volume sampling.
 
   When provided, this function is injected into the fragment shader to calculate
-  the sampled scalar value at a given voxel position and time step.
+  the sampled scalar value at a given voxel position and time step. you do not need to use an atlas texture in this mode.
 
   ### Expected Signature
   ```glsl
